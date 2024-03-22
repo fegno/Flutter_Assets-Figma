@@ -1,3 +1,18 @@
+### Requirements
+* Nodejs
+* Ts & Js
+
+### Run
+* Install npm packages
+```
+ npm install --save-dev @figma/plugin-typings
+```
+* Compaile ts to js 
+```
+ npx ts-node code.ts
+```
+
+### Pre Docs from figma 
 Below are the steps to get your plugin running. You can also find instructions at:
 
   https://www.figma.com/plugin-docs/plugin-quickstart-guide/
