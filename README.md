@@ -3,13 +3,13 @@
 * Ts & Js
 
 ### Run
+* Global activate type script
+```
+npm install -g typescript
+```
 * Install npm packages
 ```
  npm install --save-dev @figma/plugin-typings
-```
-* Compaile ts to js 
-```
- npx ts-node code.ts
 ```
 
 ### Pre Docs from figma 
