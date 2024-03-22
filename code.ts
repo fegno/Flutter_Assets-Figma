@@ -29,7 +29,10 @@ function findSizes(node: SceneNode, unwantedNames: string[]) {
     return
   } else if (node.type === 'TEXT') {
     // Add font size to the set
-    uniqueFontSizes.add((node as TextNode).fontSize as number)
+    if (typeof (node as TextNode).fontSize === 'number') {
+      uniqueFontSizes.add((node as TextNode).fontSize as number)
+    }
+
   } else if (node.type === 'FRAME' || node.type === 'SECTION' || node.type === 'GROUP' || node.type === "COMPONENT_SET" || node.type === "INSTANCE" || node.type === "BOOLEAN_OPERATION") {
     // Iterate through children of the frame
     (node as FrameNode | SectionNode | GroupNode | ComponentSetNode | InstanceNode | BooleanOperationNode).children.forEach(child => {
