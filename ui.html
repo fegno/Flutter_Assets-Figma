@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Plugin</title>
+  <style>
+    #loading {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <label for="unwantedNames">Unwanted Node Names:</label>
+  <input type="text" id="unwantedNames" name="unwantedNames" placeholder="Enter node names separated by commas">
+  <div id="generateArea">
+    <button id="generateButton">Generate Text Styles</button>
+    <div id="loading">Loading...</div>
+  </div>
+  <div id="codeArea" style="display: none;">
+    <button id="regenerateButton">Regenerate</button>
+    <pre id="code"></pre>
+  </div>
+
+  <script>
+    document.getElementById('generateButton').onclick = () => {
+      const unwantedNames = document.getElementById('unwantedNames').value.trim().split(',').map(name => name.trim());
+      document.getElementById('generateButton').style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+      parent.postMessage({ pluginMessage: { type: 'generate',unwantedNames } }, '*');
+    }
+
+    document.getElementById('regenerateButton').onclick = () => {
+      const unwantedNames = document.getElementById('unwantedNames').value.trim().split(',').map(name => name.trim());
+      parent.postMessage({ pluginMessage: { type: 'generate' ,unwantedNames} }, '*');
+    }
+
+    window.onmessage = (event) => {
+      if (event.data.pluginMessage.type === 'textStyles') {
+        const codeDiv = document.getElementById('code');
+        const textStyles = event.data.pluginMessage.textStyles;
+
+        // Prepare the code content
+        const codeContent = textStyles.join('\n');
+
+        codeDiv.innerText = codeContent;
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('generateArea').style.display = 'none';
+        document.getElementById('codeArea').style.display = 'block';
+      }
+    };
+  </script>
+</body>
+</html>
