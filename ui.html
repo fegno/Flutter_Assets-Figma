@@ -134,9 +134,11 @@
         </span>
       </button>
     </div>
+    <p>Styles 🖌</p>
     <div id="codeArea" style="display: none">
       <pre id="code"></pre>
     </div>
+    <p>Colors 🎨</p>
 
     <script>
       function toggleSelected(button) {
@@ -173,14 +175,14 @@
       window.onmessage = (event) => {
         if (event.data.pluginMessage.type === "textStyles") {
           console.log(event.data.pluginMessage.textStyles);
-          stopGenerating();
           const codeDiv = document.getElementById("code");
           const textStyles = event.data.pluginMessage.textStyles;
-
           // Prepare the code content
           const codeContent = textStyles.join("\n");
 
           codeDiv.innerText = codeContent;
+          document.getElementById("codeArea").style.display = "block";
+          stopGenerating();
         }
       };
     </script>
