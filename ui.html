@@ -113,6 +113,7 @@
       <input
         class="input-field"
         type="text"
+        id="unwantedNames"
         placeholder="Components names (sep with , )"
       />
       <button class="generate-button" onclick="startGenerating()">
@@ -144,9 +145,17 @@
         var loadingSpinner = generateButton.querySelector(".loading-spinner");
         var generateText = generateButton.querySelector(".generate-text");
 
+        const unwantedNames = document
+          .getElementById("unwantedNames")
+          .value.trim()
+          .split(",")
+          .map((name) => name.trim());
+        parent.postMessage(
+          { pluginMessage: { type: "generate", unwantedNames } },
+          "*"
+        );
         generateText.classList.add("hidden");
         loadingSpinner.classList.remove("hidden");
-        parent.postMessage({ pluginMessage: { type: "generate" } }, "*");
         setTimeout(stopLoading, 3000); // Replace 3000 with the desired duration (in milliseconds)
       }
 
