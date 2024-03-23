@@ -1,18 +1,14 @@
 {
-  "name": "Flutter Assets",
+  "name": "Flutter Gen - A Fegnite Tool 🛠️",
   "id": "1352892796271419267",
   "api": "1.0.0",
   "main": "code.js",
   "capabilities": [],
   "enableProposedApi": false,
-  "editorType": [
-    "figma"
-  ],
+  "editorType": ["figma"],
   "ui": "ui.html",
   "networkAccess": {
-    "allowedDomains": [
-      "none"
-    ]
+    "allowedDomains": ["none"]
   },
   "documentAccess": "dynamic-page"
 }

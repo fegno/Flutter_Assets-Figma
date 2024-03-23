@@ -1,55 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Figma Plugin</title>
-  <style>
-    #loading {
-      display: none;
-    }
-  </style>
-</head>
-<body>
-  <label for="unwantedNames">Unwanted Node Names:</label>
-  <input type="text" id="unwantedNames" name="unwantedNames" placeholder="Enter node names separated by commas">
-  <div id="generateArea">
-    <button id="generateButton">Generate Text Styles</button>
-    <div id="loading">Loading...</div>
-  </div>
-  <div id="codeArea" style="display: none;">
-    <button id="regenerateButton">Regenerate</button>
-    <pre id="code"></pre>
-  </div>
-
-  <script>
-    document.getElementById('generateButton').onclick = () => {
-      const unwantedNames = document.getElementById('unwantedNames').value.trim().split(',').map(name => name.trim());
-      document.getElementById('generateButton').style.display = 'none';
-      document.getElementById('loading').style.display = 'block';
-      parent.postMessage({ pluginMessage: { type: 'generate',unwantedNames } }, '*');
-    }
-
-    document.getElementById('regenerateButton').onclick = () => {
-      const unwantedNames = document.getElementById('unwantedNames').value.trim().split(',').map(name => name.trim());
-      parent.postMessage({ pluginMessage: { type: 'generate' ,unwantedNames} }, '*');
-    }
-
-    window.onmessage = (event) => {
-      if (event.data.pluginMessage.type === 'textStyles') {
-        const codeDiv = document.getElementById('code');
-        const textStyles = event.data.pluginMessage.textStyles;
-
-        // Prepare the code content
-        const codeContent = textStyles.join('\n');
-
-        codeDiv.innerText = codeContent;
-
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('generateArea').style.display = 'none';
-        document.getElementById('codeArea').style.display = 'block';
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flutter Gen - A Fegnite Tool 🛠️</title>
+    <style>
+      /* Your existing styles */
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
       }
-    };
-  </script>
-</body>
+
+      .button-group {
+        display: flex;
+      }
+
+      .button {
+        background-color: #f0f0f0;
+        color: #666666;
+        border: none;
+        padding: 4px 6px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+        border-radius: 4px;
+        margin-right: 4px;
+        box-shadow: 1px 1px 3px #c0c0c0, -1px -1px 3px #ffffff;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+
+      .button.selected {
+        background-color: #04aa6d;
+        color: white;
+      }
+
+      .button:hover {
+        transform: translateY(2px);
+        box-shadow: 4px 4px 8px #c0c0c0, -4px -4px 8px #ffffff;
+      }
+
+      .generate-button {
+        background-color: #04aa6d;
+        color: white;
+        border: none;
+        padding: 6px 8px;
+        border-radius: 4px;
+        box-shadow: 3px 3px 6px #c0c0c0, -3px -3px 6px #ffffff;
+        transition: transform 0.3s, box-shadow 0.3s;
+        display: flex;
+        align-items: center;
+      }
+
+      .generate-button:hover {
+        transform: translateY(2px);
+        box-shadow: 4px 4px 8px #c0c0c0, -4px -4px 8px #ffffff;
+      }
+
+      .loading-spinner {
+        border: 2px solid white;
+        border-left-color: #04aa6d;
+        border-radius: 50%;
+        width: 8px;
+        height: 8px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .input-field {
+        background-color: #f0f0f0;
+        color: #666666;
+        border: none;
+        padding: 6px 8px;
+        text-align: center;
+        text-decoration: none;
+        outline: none;
+        text-align: left;
+        display: inline-block;
+        font-size: 10px;
+        border-radius: 4px;
+        flex: 1; /* Take remaining space */
+        margin-right: 4px;
+        box-shadow: 1px 1px 3px #c0c0c0, -1px -1px 3px #ffffff;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+
+      .play-icon {
+        width: 12px;
+        height: 12px;
+        fill: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="button-container">
+      <div class="button-group">
+        <button class="button" onclick="toggleSelected(this)">🎨</button>
+        <button class="button" onclick="toggleSelected(this)">🖌</button>
+      </div>
+      <input
+        class="input-field"
+        type="text"
+        placeholder="Components names (sep with , )"
+      />
+      <button class="generate-button" onclick="startGenerating()">
+        <span class="loading-spinner hidden"></span>
+        <span class="generate-text">
+          <svg
+            class="play-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </span>
+      </button>
+    </div>
+
+    <script>
+      function toggleSelected(button) {
+        button.classList.toggle("selected");
+      }
+
+      function startGenerating() {
+        var generateButton = document.querySelector(".generate-button");
+        var loadingSpinner = generateButton.querySelector(".loading-spinner");
+        var generateText = generateButton.querySelector(".generate-text");
+
+        generateText.classList.add("hidden");
+        loadingSpinner.classList.remove("hidden");
+        parent.postMessage({ pluginMessage: { type: "generate" } }, "*");
+        setTimeout(stopLoading, 3000); // Replace 3000 with the desired duration (in milliseconds)
+      }
+
+      function stopLoading() {
+        var generateButton = document.querySelector(".generate-button");
+        var loadingSpinner = generateButton.querySelector(".loading-spinner");
+        var generateText = generateButton.querySelector(".generate-text");
+
+        loadingSpinner.classList.add("hidden");
+        generateText.classList.remove("hidden");
+      }
+    </script>
+  </body>
 </html>
