@@ -156,10 +156,9 @@
         );
         generateText.classList.add("hidden");
         loadingSpinner.classList.remove("hidden");
-        setTimeout(stopLoading, 3000); // Replace 3000 with the desired duration (in milliseconds)
       }
 
-      function stopLoading() {
+      function stopGenerating() {
         var generateButton = document.querySelector(".generate-button");
         var loadingSpinner = generateButton.querySelector(".loading-spinner");
         var generateText = generateButton.querySelector(".generate-text");
@@ -167,6 +166,19 @@
         loadingSpinner.classList.add("hidden");
         generateText.classList.remove("hidden");
       }
+
+      window.onmessage = (event) => {
+        if (event.data.pluginMessage.type === "textStyles") {
+          stopGenerating();
+          const codeDiv = document.getElementById("code");
+          const textStyles = event.data.pluginMessage.textStyles;
+
+          // Prepare the code content
+          const codeContent = textStyles.join("\n");
+
+          codeDiv.innerText = codeContent;
+        }
+      };
     </script>
   </body>
 </html>
